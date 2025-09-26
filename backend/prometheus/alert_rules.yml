@@ -1,0 +1,11 @@
+groups:
+- name: example_alerts
+  rules:
+  - alert: MeilisearchDown
+    expr: up{job="meilisearch"} == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Meilisearch instance is down"
+      description: "Meilisearch instance {{ $labels.instance }} has been down for more than 5 minutes."

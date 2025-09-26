@@ -1,0 +1,88 @@
+include:
+  - docker-compose.${APP_ENVIRONMENT}.yml
+
+services:
+  postgres_db:
+    image: postgres:alpine
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - "${POSTGRES_HOST_PORT}:${DB_PORT}"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - backend
+
+  meilisearch:
+    image: getmeili/meilisearch:latest
+    volumes:
+      - meili_data:/meili_data
+    ports:
+      - "${MEILISEARCH_HOST_PORT}:${MEILISEARCH_PORT}"
+    environment:
+      MEILI_MASTER_KEY: ${MEILISEARCH_MASTER_KEY}
+      MEILI_EXPERIMENTAL_FEATURES: "metrics"
+      MEILI_EXPERIMENTAL_ENABLE_METRICS: true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${MEILISEARCH_PORT}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend
+
+  redis:
+    image: redis:latest
+    ports:
+      - "${REDIS_HOST_PORT}:${REDIS_PORT}"
+    volumes:
+      - redis_data:/data
+    environment:
+      ALLOW_EMPTY_PASSWORD: yes
+    networks:
+      - backend
+
+  redis_exporter:
+    image: oliver006/redis_exporter:v1.24.0
+    command:
+      - "--redis.addr=redis://redis:${REDIS_PORT}"
+    ports:
+      - "${REDIS_EXPORTER_HOST_PORT}:${REDIS_EXPORTER_PORT}"
+    restart: unless-stopped
+    depends_on:
+      - redis
+    networks:
+      - backend
+
+  prometheus:
+    image: prom/prometheus
+    env_file:
+      - .env
+    volumes:
+      - ./prometheus:/etc/prometheus
+    ports:
+      - "${PROMETHEUS_HOST_PORT}:${PROMETHEUS_PORT}"
+    networks:
+      - backend
+
+  grafana:
+    image: grafana/grafana
+    depends_on:
+      - prometheus
+    ports:
+      - "${GRAFANA_HOST_PORT}:${GRAFANA_PORT}"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_SECURITY_ADMIN_USER}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_SECURITY_ADMIN_PASSWORD}
+    networks:
+      - backend
+
+volumes:
+  db_data:
+  redis_data:
+  grafana_data:
+  meili_data:

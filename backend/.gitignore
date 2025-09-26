@@ -1,0 +1,26 @@
+*.exe
+*.log
+
+todo.md
+/tmp/
+/logs
+
+/uploads
+/assets
+
+www/openapi.json
+/lytemp-api.postman_collection.json
+
+# Ignore all local files
+.env
+.env.dev
+.idea/
+.vscode/
+
+# we need to create this file in the server
+/prometheus/meilisearch-credentials.yml
+
+# Volumes
+/meili_data
+
+/logs.db*

@@ -1,0 +1,19 @@
+
+services:
+  x-lytemp-base:
+    build:
+      context: ../
+      dockerfile: ./deployments/Dockerfile
+    restart: always
+    volumes:
+      - ../.env:/app/.env
+      - ../config.yml:/app/config.yml
+      - ../gcs.json:/app/gcs.json
+      - ../status.txt:/app/status.txt
+      - ../www/:/app/www/
+    depends_on:
+      - postgres_db
+      - meilisearch
+      - redis
+    networks:
+      - backend

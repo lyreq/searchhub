@@ -1,0 +1,33 @@
+name: Deploy (stage)
+
+on:
+  push:
+    branches: [test-server]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-test
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH (root only)
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}   # root
+          key: ${{ secrets.SSH_KEY }}
+          script_stop: true
+          command_timeout: 30m
+          script: |
+            set -euo pipefail
+            git config --global --add safe.directory /home/lytemp/lytemp-api-test || true
+
+            cd /home/lytemp/lytemp-api-test
+            git fetch --all --prune
+            git reset --hard origin/test-server
+            git clean -fd
+
+            make deploy-stage

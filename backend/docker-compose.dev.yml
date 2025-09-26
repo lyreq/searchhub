@@ -1,0 +1,25 @@
+networks:
+  backend:
+    driver: bridge
+    name: lytemp-network
+services:
+  lytemp-dev:
+    build:
+      context: .
+      dockerfile: ./deployments/Dockerfile.dev
+    restart: always
+    ports:
+      - "${APP_HOST_PORT}:${APP_PORT}"
+    volumes:
+      - .:/usr/src/app
+      - type: bind
+        source: ./config.yml
+        target: /app/config.yml
+    depends_on:
+      - postgres_db
+      - meilisearch
+      - redis
+    networks:
+      - backend
+    environment:
+      - LOAD_DEV_ENV=0

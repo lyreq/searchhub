@@ -1,0 +1,19 @@
+FROM golang:1.24-alpine
+
+RUN apk add --no-cache \
+    gcc \
+    musl-dev
+
+WORKDIR /usr/src/app
+
+COPY go.mod go.sum ./
+ENV GODEBUG=netdns=go+1
+ENV CGO_ENABLED=1
+
+RUN go mod download
+
+COPY . .
+
+RUN go install github.com/air-verse/air@latest
+
+CMD ["air"]

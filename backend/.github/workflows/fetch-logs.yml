@@ -1,0 +1,96 @@
+name: Fetch prod logs
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Log kaynağı"
+        type: choice
+        required: true
+        options: [container, compose]
+        default: container
+      name:
+        description: "Container adı (mode=container) veya Compose service adı (mode=compose)"
+        type: string
+        required: true
+        default: "lytemp-api-lytemp-green-1"
+      since:
+        description: "Zaman filtresi (örn: 1h, 30m, 2025-08-12T08:00)"
+        type: string
+        required: false
+        default: "1h"
+      tail:
+        description: "Son N satır"
+        type: number
+        required: false
+        default: 500
+      grep:
+        description: "İsteğe bağlı filtre (grep -i)"
+        type: string
+        required: false
+        default: ""
+
+concurrency:
+  group: logs-prod
+  cancel-in-progress: true
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run log command on server (via SSH)
+        id: runlogs
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}   # root
+          key: ${{ secrets.SSH_KEY }}
+          command_timeout: 15m
+          capture_stdout: true
+          envs: MODE,NAME,SINCE,TAIL,GREP
+          script: |
+            set -euo pipefail
+            MODE='${{ inputs.mode }}'
+            NAME='${{ inputs.name }}'
+            SINCE='${{ inputs.since }}'
+            TAIL='${{ inputs.tail }}'
+            GREP='${{ inputs.grep }}'
+
+            if [ "$MODE" = "compose" ]; then
+              COMPOSE_FILE="/home/lytemp/lytemp-api/docker-compose.yml"
+              CMD="docker compose -f \"$COMPOSE_FILE\" logs --since \"$SINCE\" --tail $TAIL \"$NAME\" 2>&1"
+            else
+              CMD="docker logs --since \"$SINCE\" --tail $TAIL \"$NAME\" 2>&1"
+            fi
+
+            if [ -n "$GREP" ]; then
+              bash -lc "$CMD | grep -i -- \"$GREP\""
+            else
+              bash -lc "$CMD"
+            fi
+
+      - name: Save logs to file
+        run: |
+          mkdir -p logs
+          # stdout'u dosyaya yaz
+          cat > "logs/${{ inputs.name }}-${{ github.run_id }}.log" <<'EOF'
+          ${{ steps.runlogs.outputs.stdout }}
+          EOF
+          # Özet için son 50 satır
+          echo "### Prod Logs" >> $GITHUB_STEP_SUMMARY
+          echo "- **Mode**: \`${{ inputs.mode }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Name**: \`${{ inputs.name }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Since**: \`${{ inputs.since }}\`  **Tail**: \`${{ inputs.tail }}\`" >> $GITHUB_STEP_SUMMARY
+          if [ -n "${{ inputs.grep }}" ]; then
+            echo "- **Filter (grep)**: \`${{ inputs.grep }}\`" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "> Son 50 satır:" >> $GITHUB_STEP_SUMMARY
+          tail -n 50 "logs/${{ inputs.name }}-${{ github.run_id }}.log" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-${{ inputs.name }}-${{ github.run_id }}
+          path: logs/*.log
+          retention-days: 7

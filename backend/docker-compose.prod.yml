@@ -1,0 +1,27 @@
+networks:
+  backend:
+    driver: bridge
+    name: lytemp-network
+services:
+  lytemp-green:
+    extends:
+      file: ./scripts/lytemp-service.yml
+      service: x-lytemp-base
+    image: lytemp-green
+    ports:
+      - "${APP_GREEN_HOST_PORT}:${APP_PORT}"
+    environment:
+      - INSTANCE_NAME=green
+    volumes:
+      - ./uploads/:/app/uploads/
+      - ./assets/:/app/assets/
+
+   # lytemp-blue:
+   #   extends:
+   #     file: ./scripts/lytemp-service.yml
+   #     service: x-lytemp-base
+   #   image: lytemp-blue
+   #   ports:
+   #     - "${APP_BLUE_HOST_PORT}:${APP_PORT}"
+   #   environment:
+   #     - INSTANCE_NAME=blue

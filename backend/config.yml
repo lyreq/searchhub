@@ -1,0 +1,47 @@
+app:
+  url: ${APP_URL}
+  port: ${APP_PORT}
+  jwt_secret: ${APP_JWT_SECRET}
+  admin_jwt_secret: ${APP_ADMIN_JWT_SECRET}
+  auth_expire_hours: ${APP_AUTH_EXPIRE_HOURS}
+  otp_expire_seconds: ${OTP_EXPIRE_SECONDS}
+database:
+  name: ${DB_NAME}
+  host: ${DB_HOST}
+  pass: ${DB_PASSWORD}
+  user: ${DB_USER}
+  port: ${DB_PORT}
+  debug: ${DB_DEBUG}
+  migrate: ${DB_MIGRATE}
+meilisearch:
+  key: ${MEILISEARCH_MASTER_KEY}
+  port: ${MEILISEARCH_PORT}
+  host: ${MEILISEARCH_HOST}
+redis:
+  host: ${REDIS_HOST}
+  port: ${REDIS_PORT}
+  pass: ${REDIS_PASSWORD}
+logar:
+  admin_username: ${LOGAR_ADMIN_USERNAME}
+  admin_password: ${LOGAR_ADMIN_PASSWORD}
+mail:
+  host: ${MAIL_HOST}
+  port: ${MAIL_PORT}
+  username: ${MAIL_USERNAME}
+  password: ${MAIL_PASSWORD}
+  from_name: ${MAIL_FROM_NAME}
+  from_email: ${MAIL_FROM_EMAIL}
+  ssl: ${MAIL_SSL}
+
+telegram:
+  token: ${TELEGRAM_BOT_TOKEN}
+
+iyzico:
+  api_key: ${IYZICO_SANDBOX_API_KEY}
+  secret_key: ${IYZICO_SANDBOX_SECRET_KEY}
+  base_url: ${IYZICO_SANDBOX_BASE_URL}
+
+onesignal:
+  app_id: ${ONESIGNAL_APP_ID}
+  rest_api_key: ${ONESIGNAL_REST_API_KEY}
+

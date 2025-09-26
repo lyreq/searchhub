@@ -1,0 +1,39 @@
+name: Deploy (prod)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH (root only)
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}   # root
+          key: ${{ secrets.SSH_KEY }}
+          # port: ${{ secrets.SSH_PORT }}     # 22 değilse aç
+          script_stop: true
+          command_timeout: 30m
+          script: |
+            set -euo pipefail
+            # repo sahibi lytemp olsa bile root için güvenli yap
+            git config --global --add safe.directory /home/lytemp/lytemp-api || true
+
+            cd /home/lytemp/lytemp-api
+
+            # tertemiz çekim
+            git fetch --all --prune
+            git reset --hard origin/main
+            git clean -fd
+
+            # PATH farklarından etkilenme: make, go vs. tam path kullan ya da export PATH yap
+            # ör: export PATH="/usr/local/bin:/usr/bin:/bin:$PATH"
+            make deploy

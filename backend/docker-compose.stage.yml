@@ -1,0 +1,19 @@
+networks:
+  backend:
+    driver: bridge
+    name: lytemp-stage-network
+services:
+  lytemp-stage:
+    extends:
+      file: ./scripts/lytemp-service-stage.yml
+      service: x-lytemp-base
+    image: lytemp-stage
+    ports:
+      - "${APP_GREEN_HOST_PORT}:${APP_PORT}"
+    environment:
+      - INSTANCE_NAME=stage
+      - APP_ENV=stage
+    volumes:
+      - ./uploads/:/app/uploads/
+      - ./assets/:/app/assets/
+
