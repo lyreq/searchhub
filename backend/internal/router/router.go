@@ -1,9 +1,10 @@
 package router
 
 import (
+	"context"
 	"lytemp/config"
-	"lytemp/internal/api/empty"
-	ws "lytemp/internal/api/websocket"
+	"lytemp/internal/api/contents"
+	"lytemp/internal/api/fetch_provider"
 	"lytemp/pkg/cron"
 	"lytemp/pkg/database"
 	"lytemp/pkg/iyzico"
@@ -16,8 +17,8 @@ import (
 	"lytemp/pkg/telegram"
 	"lytemp/pkg/validator"
 	"lytemp/pkg/websocket"
+	"time"
 
-	"cloud.google.com/go/storage"
 	"github.com/labstack/echo/v4"
 )
 
@@ -33,8 +34,6 @@ type Singleton struct {
 	Redis        redis.Client
 	Meili        meilisearch.Client
 	CronService  *cron.CronService
-	GCSClient    *storage.Client
-	GCSBucket    string
 	Mailer       mailer.Mailer
 	Telegram     *telegram.Telegram
 	WSService    *websocket.Payload
@@ -63,22 +62,43 @@ func (r *Router) Routes() {
 	// ************** Controllers *************** //
 	// ****************************************** //
 
-	emptyRepository := empty.NewRepository(r.Singleton.Database)
-	emptyService := empty.NewService(emptyRepository)
-	emptyHandler := empty.NewHandler(emptyService, r.Singleton.Validator)
+	// emptyRepository := empty.NewRepository(r.Singleton.Database)
+	// emptyService := empty.NewService(emptyRepository)
+	// emptyHandler := empty.NewHandler(emptyService, r.Singleton.Validator)
 
-	wsRepository := ws.NewRepository(r.Singleton.Database)
-	wsService := ws.NewService(wsRepository)
-	wsHandler := ws.NewHandler(wsService, r.Singleton.Validator)
+	fetchProviderRepository := fetch_provider.NewRepository(r.Singleton.Database)
+	fetchProviderService := fetch_provider.NewService(fetchProviderRepository)
+	fetchProviderHandler := fetch_provider.NewHandler(fetchProviderService, r.Singleton.Validator)
+
+	contentsRepo := contents.NewRepository(r.Singleton.Database)
+	contentsSvc := contents.NewService(contentsRepo)
+	contentsSvc.WithCache(
+		func(ctx context.Context, key string) (string, error) {
+			return r.Singleton.Redis.Get(key)
+		},
+		func(ctx context.Context, key string, value string, ttl time.Duration) error {
+			return r.Singleton.Redis.Set(key, value, ttl)
+		},
+		60*time.Second,
+	)
+
+	contentsHdl := contents.NewHandler(contentsSvc, r.Singleton.Validator)
+
+	// wsRepository := ws.NewRepository(r.Singleton.Database)
+	// wsService := ws.NewService(wsRepository)
+	// wsHandler := ws.NewHandler(wsService, r.Singleton.Validator)
 
 	//
 	// ****************************************** //
 	// **************** Routers ***************** //
 	// ****************************************** //
 
-	wsService.Inject(r.Singleton.WSService)
-	ws.Router(wsHandler, apiv1.Group("/ws"))
+	// wsService.Inject(r.Singleton.WSService)
+	// ws.Router(wsHandler, apiv1.Group("/ws"))
 
-	empty.Router(emptyHandler, apiv1.Group("/empty"))
+	// empty.Router(emptyHandler, apiv1.Group("/empty"))
+
+	fetch_provider.Router(fetchProviderHandler, apiv1.Group("/fetch-provider"))
+	contents.Router(contentsHdl, apiv1.Group("/contents"))
 
 }

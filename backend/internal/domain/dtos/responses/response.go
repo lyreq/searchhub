@@ -12,6 +12,12 @@ const (
 	StatusError   Status = "error"
 )
 
+type Pagination struct {
+	Total   int64 `json:"total"`
+	Page    int   `json:"page"`
+	PerPage int   `json:"per_page"`
+}
+
 type Response[T any] struct {
 	Status  Status `json:"status" example:"error|success"`
 	Data    T      `json:"data"`

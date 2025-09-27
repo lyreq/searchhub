@@ -51,7 +51,12 @@ func New() (echo *echo.Echo, shutdownFunc func()) {
 
 	cronService := setupCronService()
 	setupLogger(cfg.Logar)
-	telegramInstance := setupTelegram(cfg.Telegram)
+
+	var telegramInstance *telegram.Telegram
+	if cfg.Telegram.Token != "" {
+		telegramInstance = setupTelegram(cfg.Telegram)
+
+	}
 	mailerService := mailer.NewGoMailer(cfg.Mail)
 	wsService := setupWebsocket()
 	iyzico := iyzico.New(cfg.Iyzico.APIKey, cfg.Iyzico.SecretKey, cfg.Iyzico.BaseURL, cfg.App.URL+"/api/v1/payment/iyzico-callback")
@@ -231,24 +236,21 @@ func Shutdown(singleton router.Singleton) {
 }
 
 func setupPostmanGen() *postmangen.PostmanGen {
-	postmanGen := postmangen.NewPostmanGen("LYTEMP API", "LYTEMP API Documentation").
+	postmanGen := postmangen.NewPostmanGen("SEARCHHUB API", "SearchHub API Documentation").
 		AddVariable("base_url", "http://localhost:8080").
-		AddVariable("token", "YOUR TOKEN HERE").
-		AddPlaceholder("username", "test_username").
-		AddPlaceholder("password", "test_password").
-		AddPlaceholder("email", "test@test.com")
-
+		AddVariable("token", "YOUR TOKEN HERE")
 	return postmanGen
 }
 
 func setupOpenAPIGen() *openapigen.OpenAPIGen {
-	openapigen := openapigen.New("LYTEMP API", "LYTEMP API Documentation")
+	openapigen := openapigen.New("SEARCHHUB API", "SEARCHHUB API Documentation")
 	err := openapigen.RegisterType(reflect.TypeOf(pagination.Pagination{}))
 	if err != nil {
 		log.Fatal(err)
 	}
 	openapigen.
-		AddGroup("Auth", "^/api/v1/auth(/.*)?$")
+		AddGroup("Contents", "^/api/v1/contents(/.*)?$").
+		AddGroup("Provider", "^/api/v1/fetch-provider(/.*)?$")
 
 	return openapigen
 }

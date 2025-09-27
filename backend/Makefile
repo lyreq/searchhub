@@ -21,3 +21,5 @@ services-restart:
 	
 deploy-stage:
 	APP_ENVIRONMENT=stage ACTION=start ./scripts/deploy.sh
+test:
+	go test ./... -race -count=1

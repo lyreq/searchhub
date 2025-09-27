@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"lytemp/internal/domain/models"
 	"strings"
 
 	_ "github.com/jackc/pgx/v5/stdlib" // sql.Open("pgx", ...) için
@@ -167,6 +168,8 @@ func (c *Client) Migrate() error {
 	*/
 	err := c.db.AutoMigrate(
 	// &models.User{},
+	&models.Content{},
+	&models.ProviderSync{},
 	)
 	if err != nil {
 		return fmt.Errorf("could not migrate: %s", err.Error())

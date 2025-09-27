@@ -45,3 +45,6 @@ onesignal:
   app_id: ${ONESIGNAL_APP_ID}
   rest_api_key: ${ONESIGNAL_REST_API_KEY}
 
+provider:
+  provider1: ${PROVIDER1_URL}
+  provider2: ${PROVIDER2_URL}

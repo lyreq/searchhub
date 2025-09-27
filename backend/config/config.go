@@ -7,9 +7,10 @@ type Config struct {
 	Redis       Redis       `mapstructure:"redis" validate:"required"`
 	Logar       Logar       `mapstructure:"logar" validate:"required"`
 	Mail        Mail        `mapstructure:"mail" validate:"required"`
-	Telegram    Telegram    `mapstructure:"telegram" validate:"required"`
-	Iyzico      Iyzico      `mapstructure:"iyzico" validate:"required"`
+	Telegram    Telegram    `mapstructure:"telegram" validate:"omitempty"`
+	Iyzico      Iyzico      `mapstructure:"iyzico" validate:"omitempty"`
 	Onesignal   Onesignal   `mapstructure:"onesignal" validate:"required"`
+	Provider    Provider    `mapstructure:"provider" validate:"required"`
 }
 
 type App struct {
@@ -47,6 +48,10 @@ type Logar struct {
 	AdminUsername string `mapstructure:"admin_username" validate:"omitempty"`
 	AdminPassword string `mapstructure:"admin_password" validate:"omitempty"`
 }
+type Provider struct {
+	Provider1 string `mapstructure:"provider1" validate:"omitempty"`
+	Provider2 string `mapstructure:"provider2" validate:"omitempty"`
+}
 
 type Mail struct {
 	Host      string `mapstructure:"host" validate:"required"`
@@ -59,18 +64,18 @@ type Mail struct {
 }
 
 type Telegram struct {
-	Token string `mapstructure:"token" validate:"required"`
+	Token string `mapstructure:"token" validate:"omitempty"`
 }
 
 type Iyzico struct {
-	APIKey    string `mapstructure:"api_key" validate:"required"`
-	SecretKey string `mapstructure:"secret_key" validate:"required"`
-	BaseURL   string `mapstructure:"base_url" validate:"required"`
+	APIKey    string `mapstructure:"api_key" validate:"omitempty"`
+	SecretKey string `mapstructure:"secret_key" validate:"omitempty"`
+	BaseURL   string `mapstructure:"base_url" validate:"omitempty"`
 }
 
 type Onesignal struct {
-	AppID      string `mapstructure:"app_id" validate:"required"`
-	RestAPIKey string `mapstructure:"rest_api_key" validate:"required"`
+	AppID      string `mapstructure:"app_id" validate:"omitempty"`
+	RestAPIKey string `mapstructure:"rest_api_key" validate:"omitempty"`
 }
 
 var config Config

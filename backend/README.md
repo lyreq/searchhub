@@ -1,113 +1,135 @@
 
-# # LyTemp Boilerplate (Echo Framework)
+# SearchHub Backend — Setup & Run
 
-This repository provides a production-ready **Golang Echo** boilerplate with a clean modular structure, service integrations (**Postgres**, **Redis**, **Meilisearch**), and monitoring stack (**Prometheus** + **Grafana**).
+This project is a **Golang (Echo)** backend that ingests content from two providers (JSON/XML), normalizes & scores them, stores in **Postgres**, caches list responses in **Redis**, and exposes a small API.
 
 
-## 🚀 Features
--   Modular project structure (`internal`, `pkg`, `server`) with clear separation of concerns
+## Prerequisites
+
+-   **Docker & Docker Compose v2** (recommended path)
     
--   Postgres, Redis, Meilisearch containers via Docker Compose
-    
--   Prometheus + Grafana monitoring stack
-    
--   Air hot-reload support for fast development
-    
--   Configurable via `.env` + `config.yml`
-    
--   Includes common integrations: Mailer, Redis, Iyzico, OneSignal, Telegram, RevenueCat, etc.
+-   (Optional for host-run) **Go 1.22+**, **Make**
 
+## 1) Environment
 
-## 📦 Prerequisites
+Create a `.env` at the repo root. Minimal vars for this project:
+```bash
+#### DOCKER HOST PORT MAPPINGS ####
 
-Make sure you have the following installed:
--   Docker & Docker Compose v2
+APP_HOST_PORT="8080"
+APP_GREEN_HOST_PORT="8005"
+APP_BLUE_HOST_PORT="8006"
+POSTGRES_HOST_PORT="5433"
+MEILISEARCH_HOST_PORT="7701"
+REDIS_HOST_PORT="6380"
+REDIS_EXPORTER_HOST_PORT="9122"
+PROMETHEUS_HOST_PORT="9091"
+GRAFANA_HOST_PORT="3001"
+
+#### APP ENVIRONMENT ####
+
+APP_URL="http://localhost:8082"
+APP_PORT="8082"
+APP_JWT_SECRET="cZ08EMbLEbj3REp7fU"
+APP_ADMIN_JWT_SECRET="H12EcCoGvNpKYrp6Vw"
+APP_AUTH_EXPIRE_HOURS=24
+OTP_EXPIRE_SECONDS=45
+APP_ENVIRONMENT=dev
+
+DB_NAME="lytemp"
+DB_HOST="127.0.0.1"
+DB_PASSWORD="db_password"
+DB_USER="root"
+DB_PORT="5432"
+DB_DEBUG="false"
+DB_MIGRATE="true"
+
+MEILISEARCH_KEY="ms"
+MEILISEARCH_PORT="7700"
+MEILISEARCH_HOST="localhost"
+MEILISEARCH_MASTER_KEY="meilisearch_master_key"
+MEILISEARCH_API_KEY="meilisearch_master_key"
   
--   Go 1.22+
-    
--   Make
-## ⚙️ Configuration
 
-Copy `.env` and update values as needed:
-```bash
-cp .env.example .env
+REDIS_HOST="localhost"
+REDIS_PORT="6379"
+REDIS_PASSWORD="redis_password"
+REDIS_EXPORTER_PORT="9121"
+
+PROMETHEUS_PORT="9090"
+
+GRAFANA_SECURITY_ADMIN_USER="grafana_security_admin_user"
+GRAFANA_SECURITY_ADMIN_PASSWORD="grafana_security_admin_password"
+GRAFANA_PORT="3000"
+
+LOGAR_ADMIN_USERNAME="lytemp"
+LOGAR_ADMIN_PASSWORD="81tLsVj4uSMtudTr8k"
+
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=no-reply@lytemp.com
+MAIL_PASSWORD=super_secure_password
+MAIL_FROM_NAME=lytemp
+MAIL_FROM_EMAIL=no-reply@lytemp.com
+MAIL_SSL=false
+
+TELEGRAM_BOT_TOKEN="asdasd"
+
+IYZICO_SANDBOX_API_KEY="sandbox-abc"
+IYZICO_SANDBOX_SECRET_KEY="def"
+IYZICO_SANDBOX_BASE_URL="https://sandbox-api.iyzipay.com"
+
+ONESIGNAL_APP_ID=""
+ONESIGNAL_REST_API_KEY=""
+
+PROVIDER1_URL="https://raw.githubusercontent.com/WEG-Technology/mock/refs/heads/main/v2/provider1"
+
+PROVIDER2_URL="https://raw.githubusercontent.com/WEG-Technology/mock/refs/heads/main/v2/provider2"
 ```
--   The `.env` file defines container ports, database credentials, API keys, and environment variables.
-    
--   Application-level configuration is managed in `config.yml`.  
-    All values are mapped from `.env`.
 
-## 🛠️ Running in Development
+> **Note:**
+> 
+> -   If you run the backend **inside Docker**, keep `DB_HOST=postgres_db` and `REDIS_HOST=redis` (service names).
+>     
+> -   If you run the backend **on your host** with only Postgres/Redis in Docker, set `DB_HOST=127.0.0.1`, `REDIS_HOST=127.0.0.1`.
+>
 
-You have two main workflows:
+## 2) Local Dev (Run Go on host)
 
-### 1) Host-based (manual run)
-
-Bring up dependencies (Postgres, Redis, Meilisearch, etc.) with Docker, then run the app locally:
+Bring up Postgres, Redis, and the API in containers.
 ```bash
+# build & start (dev compose)
 make services-start
 go run .
 ```
--   `make services-start` → starts core services
-    
--   `go run .` → runs the Echo app from your machine using `.env` values
-    
+-   Backend API: **[http://localhost:8082](http://localhost:8082)**
+-   Postgres: mapped to host (see your compose file)
+-   Redis: mapped to host (see your compose file)
+## 3) Running Tests
 
-> In this mode, `DB_HOST=127.0.0.1` is required in `.env`.
-
-### 2. **Containerized (hot-reload with Air)**
-
-Run the app inside Docker with hot-reload:
+Run all unit tests (race detector, no cache):
 ```bash
-make up PROFILE=dev ENV_FILE=.env.docker
+make test
 ```
 
--   Uses **Air** for live reload on file changes
+## 4) Notes
+
+-   **Ports:** ensure `APP_PORT=8082` so the frontend can call `http://localhost:8082/api/v1/...`.
     
--   Container links use service names (`postgres_db`, `redis`, `meilisearch`) instead of `localhost`
+-   **CORS:** if you serve the frontend from a different origin, enable/configure CORS in the Echo server as needed.
     
-
-> In this mode, your `.env.docker` should set `DB_HOST=postgres_db`.
-
-
-## Useful Makefile Commands
-
--   `make up PROFILE=dev` → start full stack in dev mode
+-   **Rate limiting & timeouts:** provider HTTP calls are guarded by timeouts, retries, and an in-memory rate limit per host.
     
--   `make down PROFILE=dev` → stop stack
+-   **No migrations required:** the app uses GORM auto-migrate (based on current models).
     
--   `make logs PROFILE=dev` → follow logs
+-   **Logging:** application logs to stdout; Docker `logs -f` shows live output.
+
+## 5) Troubleshooting
+
+-   **DB connection errors:** verify `DB_HOST` matches your run mode (container vs host). Ensure Postgres is up.
     
--   `make restart PROFILE=dev` → restart containers
+-   **Empty list:** run `GET /api/v1/fetch-provider` first to ingest mock data.
     
-
-----------
-
-## 📊 Monitoring
-
--   Prometheus → [http://localhost:9090](http://localhost:9090)
+-   **CORS issues:** configure allowed origins for the frontend host.
     
--   Grafana → [http://localhost:3000](http://localhost:3000) (default admin user/password from `.env`)
-    
--   Redis Exporter → [http://localhost:9121/metrics](http://localhost:9121/metrics)
-
-## 📂 Project Structure (highlights)
-```bash
-internal/       # Domain logic, handlers, routers, middleware
-pkg/            # Shared utilities & integrations (db, redis, mailer, etc.)
-server/         # Server setup, validation
-deployments/    # Dockerfiles (dev/stage/prod)
-scripts/        # Helper scripts for deploy/restart
-config.yml      # App configuration
-.env            # Environment variables
-```
-
-## 📝 Notes
-
--   Do not commit real secrets inside `.env`. Use `.env.example` as a template.
-    
--   For staging and production, use `PROFILE=stage` / `PROFILE=prod` with their respective env files.
-    
--   Healthchecks are enabled so the app waits for Postgres, Redis, and Meilisearch to be ready.
-
-✅ That’s it! After following the steps, you’ll have **LyTemp running locally with full dependencies and monitoring.**
+-   **Cache confusion:** list results are cached per `(query,type,sort,page,per_page)`. Wait TTL or vary params to bypass.

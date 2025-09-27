@@ -1,0 +1,5 @@
+{
+  "name": "SearchHub Dashboard",
+  "description": "A dashboard application for the SearchHub content search service, allowing users to search, filter, and view content details, as well as trigger data fetching from providers.",
+  "requestFramePermissions": []
+}
