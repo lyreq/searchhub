@@ -36,7 +36,7 @@ APP_AUTH_EXPIRE_HOURS=24
 OTP_EXPIRE_SECONDS=45
 APP_ENVIRONMENT=dev
 
-DB_NAME="lytemp"
+DB_NAME="searchhub"
 DB_HOST="127.0.0.1"
 DB_PASSWORD="db_password"
 DB_USER="root"
@@ -72,15 +72,6 @@ MAIL_PASSWORD=super_secure_password
 MAIL_FROM_NAME=lytemp
 MAIL_FROM_EMAIL=no-reply@lytemp.com
 MAIL_SSL=false
-
-TELEGRAM_BOT_TOKEN="asdasd"
-
-IYZICO_SANDBOX_API_KEY="sandbox-abc"
-IYZICO_SANDBOX_SECRET_KEY="def"
-IYZICO_SANDBOX_BASE_URL="https://sandbox-api.iyzipay.com"
-
-ONESIGNAL_APP_ID=""
-ONESIGNAL_REST_API_KEY=""
 
 PROVIDER1_URL="https://raw.githubusercontent.com/WEG-Technology/mock/refs/heads/main/v2/provider1"
 

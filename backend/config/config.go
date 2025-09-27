@@ -7,9 +7,6 @@ type Config struct {
 	Redis       Redis       `mapstructure:"redis" validate:"required"`
 	Logar       Logar       `mapstructure:"logar" validate:"required"`
 	Mail        Mail        `mapstructure:"mail" validate:"required"`
-	Telegram    Telegram    `mapstructure:"telegram" validate:"omitempty"`
-	Iyzico      Iyzico      `mapstructure:"iyzico" validate:"omitempty"`
-	Onesignal   Onesignal   `mapstructure:"onesignal" validate:"required"`
 	Provider    Provider    `mapstructure:"provider" validate:"required"`
 }
 
@@ -61,21 +58,6 @@ type Mail struct {
 	FromName  string `mapstructure:"from_name" validate:"required"`
 	FromEmail string `mapstructure:"from_email" validate:"required"`
 	SSL       bool   `mapstructure:"ssl"`
-}
-
-type Telegram struct {
-	Token string `mapstructure:"token" validate:"omitempty"`
-}
-
-type Iyzico struct {
-	APIKey    string `mapstructure:"api_key" validate:"omitempty"`
-	SecretKey string `mapstructure:"secret_key" validate:"omitempty"`
-	BaseURL   string `mapstructure:"base_url" validate:"omitempty"`
-}
-
-type Onesignal struct {
-	AppID      string `mapstructure:"app_id" validate:"omitempty"`
-	RestAPIKey string `mapstructure:"rest_api_key" validate:"omitempty"`
 }
 
 var config Config

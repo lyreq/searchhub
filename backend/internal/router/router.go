@@ -7,14 +7,10 @@ import (
 	"lytemp/internal/api/fetch_provider"
 	"lytemp/pkg/cron"
 	"lytemp/pkg/database"
-	"lytemp/pkg/iyzico"
 	"lytemp/pkg/mailer"
 	"lytemp/pkg/meilisearch"
-	notificationService "lytemp/pkg/notification"
-	"lytemp/pkg/onesignal"
 	"lytemp/pkg/redis"
 	"lytemp/pkg/schemaparser"
-	"lytemp/pkg/telegram"
 	"lytemp/pkg/validator"
 	"lytemp/pkg/websocket"
 	"time"
@@ -29,17 +25,13 @@ type Router struct {
 }
 
 type Singleton struct {
-	Database     *database.Client
-	Validator    validator.Validator
-	Redis        redis.Client
-	Meili        meilisearch.Client
-	CronService  *cron.CronService
-	Mailer       mailer.Mailer
-	Telegram     *telegram.Telegram
-	WSService    *websocket.Payload
-	Iyzico       iyzico.Iyzico
-	OneSignal    *onesignal.OneSignalService
-	Notification *notificationService.Service
+	Database    *database.Client
+	Validator   validator.Validator
+	Redis       redis.Client
+	Meili       meilisearch.Client
+	CronService *cron.CronService
+	Mailer      mailer.Mailer
+	WSService   *websocket.Payload
 }
 
 func New(config *config.Config, echo *echo.Echo, singleton Singleton) *Router {

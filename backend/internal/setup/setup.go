@@ -8,14 +8,10 @@ import (
 	"lytemp/internal/utils/pagination"
 	"lytemp/pkg/cron"
 	"lytemp/pkg/database"
-	"lytemp/pkg/iyzico"
 	"lytemp/pkg/lg"
 	"lytemp/pkg/mailer"
 	"lytemp/pkg/meilisearch"
-	"lytemp/pkg/notification"
-	"lytemp/pkg/onesignal"
 	"lytemp/pkg/redis"
-	"lytemp/pkg/telegram"
 	"lytemp/pkg/validator"
 	"lytemp/pkg/viper"
 	"lytemp/pkg/websocket"
@@ -52,16 +48,8 @@ func New() (echo *echo.Echo, shutdownFunc func()) {
 	cronService := setupCronService()
 	setupLogger(cfg.Logar)
 
-	var telegramInstance *telegram.Telegram
-	if cfg.Telegram.Token != "" {
-		telegramInstance = setupTelegram(cfg.Telegram)
-
-	}
 	mailerService := mailer.NewGoMailer(cfg.Mail)
 	wsService := setupWebsocket()
-	iyzico := iyzico.New(cfg.Iyzico.APIKey, cfg.Iyzico.SecretKey, cfg.Iyzico.BaseURL, cfg.App.URL+"/api/v1/payment/iyzico-callback")
-	oneSignalService := setupOneSignal(cfg.Onesignal)
-	notificationService := notification.New(oneSignalService)
 	echo = setupEcho()
 	router := router.New(&cfg, echo, router.Singleton{
 		Database:  db,
@@ -69,13 +57,9 @@ func New() (echo *echo.Echo, shutdownFunc func()) {
 		Redis:     redis,
 		Meili:     meili,
 
-		CronService:  cronService,
-		Mailer:       mailerService,
-		Telegram:     telegramInstance,
-		WSService:    wsService,
-		Iyzico:       iyzico,
-		OneSignal:    oneSignalService,
-		Notification: notificationService,
+		CronService: cronService,
+		Mailer:      mailerService,
+		WSService:   wsService,
 	})
 
 	wsRepo := wsapi.NewRepository(db)
@@ -190,15 +174,6 @@ func setupCronService() *cron.CronService {
 	return cron.NewService()
 }
 
-func setupTelegram(cfg config.Telegram) *telegram.Telegram {
-	t, err := telegram.New()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return t
-}
-
 func setupLogger(cfg config.Logar) logar.App {
 	if _, err := os.Stat("logs/logs.db"); os.IsNotExist(err) {
 		os.Mkdir("logs", 0755)
@@ -225,10 +200,6 @@ func setupLogger(cfg config.Logar) logar.App {
 
 	lg.Set(app)
 	return app
-}
-
-func setupOneSignal(cfg config.Onesignal) *onesignal.OneSignalService {
-	return onesignal.NewOneSignalService(cfg.AppID, cfg.RestAPIKey)
 }
 
 func Shutdown(singleton router.Singleton) {
