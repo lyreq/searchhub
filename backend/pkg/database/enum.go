@@ -3,7 +3,6 @@ package database
 import (
 	"fmt"
 	"log"
-	"lytemp/internal/domain/models"
 	"strings"
 
 	"gorm.io/gorm"
@@ -15,12 +14,7 @@ type Enum struct {
 }
 
 func SeedEnums(db *gorm.DB) {
-	enums := []Enum{
-		{
-			Name:   "enum_status_type",
-			Values: []string{string(models.StatusActive), string(models.StatusPassive)},
-		},
-	}
+	enums := []Enum{}
 
 	for _, enum := range enums {
 		dropQuery := fmt.Sprintf(`DROP TYPE IF EXISTS "%s" CASCADE;`, enum.Name)

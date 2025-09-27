@@ -9,12 +9,9 @@ import (
 	"lytemp/pkg/cron"
 	"lytemp/pkg/database"
 	"lytemp/pkg/lg"
-	"lytemp/pkg/mailer"
-	"lytemp/pkg/meilisearch"
 	"lytemp/pkg/redis"
 	"lytemp/pkg/validator"
 	"lytemp/pkg/viper"
-	"lytemp/pkg/websocket"
 	"os"
 	"reflect"
 
@@ -29,8 +26,6 @@ import (
 	"github.com/labstack/echo/v4"
 	echoMiddleware "github.com/labstack/echo/v4/middleware"
 	echoSwagger "github.com/swaggo/echo-swagger"
-
-	wsapi "lytemp/internal/api/websocket"
 )
 
 func New() (echo *echo.Echo, shutdownFunc func()) {
@@ -43,28 +38,18 @@ func New() (echo *echo.Echo, shutdownFunc func()) {
 	db := setupDatabase(cfg.Database)
 	_validator := validator.New(db.Get(), postmanGen, openapigen)
 	redis := setupRedis(cfg.Redis)
-	meili := setupMeiliSearch(cfg.MeiliSearch)
 
 	cronService := setupCronService()
 	setupLogger(cfg.Logar)
 
-	mailerService := mailer.NewGoMailer(cfg.Mail)
-	wsService := setupWebsocket()
 	echo = setupEcho()
 	router := router.New(&cfg, echo, router.Singleton{
 		Database:  db,
 		Validator: _validator,
 		Redis:     redis,
-		Meili:     meili,
 
 		CronService: cronService,
-		Mailer:      mailerService,
-		WSService:   wsService,
 	})
-
-	wsRepo := wsapi.NewRepository(db)
-	wsApiService := wsapi.NewService(wsRepo)
-	wsApiService.Inject(wsService)
 
 	validator.GenerateDocs = true
 	router.Routes()
@@ -94,10 +79,6 @@ func loadConfig() config.Config {
 	}
 
 	return cfg
-}
-
-func setupWebsocket() *websocket.Payload {
-	return websocket.New(make(map[string]chan websocket.Event))
 }
 
 func setupDatabase(cfg config.Database) *database.Client {
@@ -153,16 +134,6 @@ func setupEcho() *echo.Echo {
 func setupRedis(cfg config.Redis) redis.Client {
 	client := redis.New()
 	err := client.Connect(cfg.Host, cfg.Port, cfg.Pass)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return client
-}
-
-func setupMeiliSearch(cfg config.MeiliSearch) meilisearch.Client {
-	client := meilisearch.New()
-	err := client.Connect(cfg.Host, cfg.Port, cfg.Key)
 	if err != nil {
 		log.Fatal(err)
 	}

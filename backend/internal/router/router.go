@@ -7,12 +7,9 @@ import (
 	"lytemp/internal/api/fetch_provider"
 	"lytemp/pkg/cron"
 	"lytemp/pkg/database"
-	"lytemp/pkg/mailer"
-	"lytemp/pkg/meilisearch"
 	"lytemp/pkg/redis"
 	"lytemp/pkg/schemaparser"
 	"lytemp/pkg/validator"
-	"lytemp/pkg/websocket"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -28,10 +25,7 @@ type Singleton struct {
 	Database    *database.Client
 	Validator   validator.Validator
 	Redis       redis.Client
-	Meili       meilisearch.Client
 	CronService *cron.CronService
-	Mailer      mailer.Mailer
-	WSService   *websocket.Payload
 }
 
 func New(config *config.Config, echo *echo.Echo, singleton Singleton) *Router {

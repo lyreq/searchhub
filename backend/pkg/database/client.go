@@ -167,9 +167,8 @@ func (c *Client) Migrate() error {
 		SeedEnums(c.db)
 	*/
 	err := c.db.AutoMigrate(
-	// &models.User{},
-	&models.Content{},
-	&models.ProviderSync{},
+		&models.Content{},
+		&models.ProviderSync{},
 	)
 	if err != nil {
 		return fmt.Errorf("could not migrate: %s", err.Error())

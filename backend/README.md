@@ -91,7 +91,7 @@ Bring up Postgres, Redis, and the API in containers.
 ```bash
 # build & start (dev compose)
 make services-start
-go run .
+go run ./cmd/app
 ```
 -   Backend API: **[http://localhost:8082](http://localhost:8082)**
 -   Postgres: mapped to host (see your compose file)
