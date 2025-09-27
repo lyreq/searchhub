@@ -15,24 +15,6 @@ services:
     networks:
       - backend
 
-  meilisearch:
-    image: getmeili/meilisearch:latest
-    volumes:
-      - meili_data:/meili_data
-    ports:
-      - "${MEILISEARCH_HOST_PORT}:${MEILISEARCH_PORT}"
-    environment:
-      MEILI_MASTER_KEY: ${MEILISEARCH_MASTER_KEY}
-      MEILI_EXPERIMENTAL_FEATURES: "metrics"
-      MEILI_EXPERIMENTAL_ENABLE_METRICS: true
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:${MEILISEARCH_PORT}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - backend
-
   redis:
     image: redis:latest
     ports:
@@ -85,4 +67,3 @@ volumes:
   db_data:
   redis_data:
   grafana_data:
-  meili_data:

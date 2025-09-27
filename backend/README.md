@@ -20,7 +20,6 @@ APP_HOST_PORT="8080"
 APP_GREEN_HOST_PORT="8005"
 APP_BLUE_HOST_PORT="8006"
 POSTGRES_HOST_PORT="5433"
-MEILISEARCH_HOST_PORT="7701"
 REDIS_HOST_PORT="6380"
 REDIS_EXPORTER_HOST_PORT="9122"
 PROMETHEUS_HOST_PORT="9091"
@@ -44,13 +43,6 @@ DB_PORT="5432"
 DB_DEBUG="false"
 DB_MIGRATE="true"
 
-MEILISEARCH_KEY="ms"
-MEILISEARCH_PORT="7700"
-MEILISEARCH_HOST="localhost"
-MEILISEARCH_MASTER_KEY="meilisearch_master_key"
-MEILISEARCH_API_KEY="meilisearch_master_key"
-  
-
 REDIS_HOST="localhost"
 REDIS_PORT="6379"
 REDIS_PASSWORD="redis_password"
@@ -65,16 +57,7 @@ GRAFANA_PORT="3000"
 LOGAR_ADMIN_USERNAME="lytemp"
 LOGAR_ADMIN_PASSWORD="81tLsVj4uSMtudTr8k"
 
-MAIL_HOST=smtp.gmail.com
-MAIL_PORT=587
-MAIL_USERNAME=no-reply@lytemp.com
-MAIL_PASSWORD=super_secure_password
-MAIL_FROM_NAME=lytemp
-MAIL_FROM_EMAIL=no-reply@lytemp.com
-MAIL_SSL=false
-
 PROVIDER1_URL="https://raw.githubusercontent.com/WEG-Technology/mock/refs/heads/main/v2/provider1"
-
 PROVIDER2_URL="https://raw.githubusercontent.com/WEG-Technology/mock/refs/heads/main/v2/provider2"
 ```
 

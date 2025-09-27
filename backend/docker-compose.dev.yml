@@ -17,7 +17,6 @@ services:
         target: /app/config.yml
     depends_on:
       - postgres_db
-      - meilisearch
       - redis
     networks:
       - backend

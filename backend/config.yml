@@ -13,10 +13,6 @@ database:
   port: ${DB_PORT}
   debug: ${DB_DEBUG}
   migrate: ${DB_MIGRATE}
-meilisearch:
-  key: ${MEILISEARCH_MASTER_KEY}
-  port: ${MEILISEARCH_PORT}
-  host: ${MEILISEARCH_HOST}
 redis:
   host: ${REDIS_HOST}
   port: ${REDIS_PORT}
@@ -24,27 +20,6 @@ redis:
 logar:
   admin_username: ${LOGAR_ADMIN_USERNAME}
   admin_password: ${LOGAR_ADMIN_PASSWORD}
-mail:
-  host: ${MAIL_HOST}
-  port: ${MAIL_PORT}
-  username: ${MAIL_USERNAME}
-  password: ${MAIL_PASSWORD}
-  from_name: ${MAIL_FROM_NAME}
-  from_email: ${MAIL_FROM_EMAIL}
-  ssl: ${MAIL_SSL}
-
-telegram:
-  token: ${TELEGRAM_BOT_TOKEN}
-
-iyzico:
-  api_key: ${IYZICO_SANDBOX_API_KEY}
-  secret_key: ${IYZICO_SANDBOX_SECRET_KEY}
-  base_url: ${IYZICO_SANDBOX_BASE_URL}
-
-onesignal:
-  app_id: ${ONESIGNAL_APP_ID}
-  rest_api_key: ${ONESIGNAL_REST_API_KEY}
-
 provider:
   provider1: ${PROVIDER1_URL}
   provider2: ${PROVIDER2_URL}

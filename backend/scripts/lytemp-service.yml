@@ -13,7 +13,6 @@ services:
       - ../www/:/app/www/
     depends_on:
       - postgres_db
-      - meilisearch
       - redis
     networks:
       - backend

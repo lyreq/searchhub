@@ -1,13 +1,11 @@
 package config
 
 type Config struct {
-	App         App         `mapstructure:"app" validate:"required"`
-	Database    Database    `mapstructure:"database" validate:"required"`
-	MeiliSearch MeiliSearch `mapstructure:"meilisearch" validate:"required"`
-	Redis       Redis       `mapstructure:"redis" validate:"required"`
-	Logar       Logar       `mapstructure:"logar" validate:"required"`
-	Mail        Mail        `mapstructure:"mail" validate:"required"`
-	Provider    Provider    `mapstructure:"provider" validate:"required"`
+	App      App      `mapstructure:"app" validate:"required"`
+	Database Database `mapstructure:"database" validate:"required"`
+	Redis    Redis    `mapstructure:"redis" validate:"required"`
+	Logar    Logar    `mapstructure:"logar" validate:"required"`
+	Provider Provider `mapstructure:"provider" validate:"required"`
 }
 
 type App struct {
@@ -29,12 +27,6 @@ type Database struct {
 	Migrate bool   `mapstructure:"migrate"`
 }
 
-type MeiliSearch struct {
-	Key  string `mapstructure:"key" validate:"required"`
-	Port int    `mapstructure:"port" validate:"required"`
-	Host string `mapstructure:"host" validate:"required"`
-}
-
 type Redis struct {
 	Host string `mapstructure:"host" validate:"required"`
 	Port int    `mapstructure:"port" validate:"required"`
@@ -48,16 +40,6 @@ type Logar struct {
 type Provider struct {
 	Provider1 string `mapstructure:"provider1" validate:"omitempty"`
 	Provider2 string `mapstructure:"provider2" validate:"omitempty"`
-}
-
-type Mail struct {
-	Host      string `mapstructure:"host" validate:"required"`
-	Port      int    `mapstructure:"port" validate:"required"`
-	Username  string `mapstructure:"username" validate:"required"`
-	Password  string `mapstructure:"password" validate:"required"`
-	FromName  string `mapstructure:"from_name" validate:"required"`
-	FromEmail string `mapstructure:"from_email" validate:"required"`
-	SSL       bool   `mapstructure:"ssl"`
 }
 
 var config Config
