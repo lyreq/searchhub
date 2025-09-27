@@ -1,0 +1,208 @@
+{
+  "components": {
+    "schemas": {
+      "pagination.Pagination": {
+        "properties": {
+          "Count": {
+            "type": "integer"
+          },
+          "Cursor": {
+            "type": "integer"
+          },
+          "Direction": {
+            "type": "integer"
+          },
+          "Page": {
+            "type": "integer"
+          },
+          "Strategy": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "requests.ContentShowRequest": {
+        "properties": {
+          "ID": {
+            "type": "integer"
+          },
+          "IncludeRaw": {
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "requests.FetchProviderRequest": {
+        "properties": {
+          "Pages": {
+            "type": "integer"
+          },
+          "PerPage": {
+            "type": "integer"
+          },
+          "Query": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "requests.ListContentRequest": {
+        "properties": {
+          "Page": {
+            "type": "integer"
+          },
+          "PerPage": {
+            "type": "integer"
+          },
+          "Query": {
+            "type": "string"
+          },
+          "Sort": {
+            "type": "string"
+          },
+          "Type": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "SEARCHHUB API",
+    "version": "SEARCHHUB API Documentation"
+  },
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/contents": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "type",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sort",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Contents"
+        ]
+      }
+    },
+    "/api/v1/contents/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "include_raw",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Contents"
+        ]
+      }
+    },
+    "/api/v1/fetch-provider": {
+      "get": {
+        "parameters": [
+          {
+            "in": "query",
+            "name": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "pages",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "per_page",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Provider"
+        ]
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Provider"
+    },
+    {
+      "name": "Contents"
+    }
+  ]
+}

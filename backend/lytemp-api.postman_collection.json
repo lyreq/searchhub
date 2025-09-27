@@ -1,0 +1,166 @@
+{
+    "auth": {
+        "type": "bearer",
+        "bearer": [
+            {
+                "key": "token",
+                "value": "{{token}}",
+                "type": "string"
+            }
+        ]
+    },
+    "info": {
+        "name": "SEARCHHUB API",
+        "description": "SearchHub API Documentation",
+        "version": "",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "api",
+            "item": [
+                {
+                    "name": "v1",
+                    "item": [
+                        {
+                            "name": "fetch-provider",
+                            "request": {
+                                "url": {
+                                    "raw": "{{base_url}}/api/v1/fetch-provider",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "fetch-provider"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "query",
+                                            "value": "",
+                                            "description": ""
+                                        },
+                                        {
+                                            "key": "pages",
+                                            "value": "0",
+                                            "description": ""
+                                        },
+                                        {
+                                            "key": "per_page",
+                                            "value": "0",
+                                            "description": ""
+                                        }
+                                    ]
+                                },
+                                "method": "GET",
+                                "body": {
+                                    "mode": ""
+                                }
+                            }
+                        },
+                        {
+                            "name": "contents",
+                            "request": {
+                                "url": {
+                                    "raw": "{{base_url}}/api/v1/contents",
+                                    "host": [
+                                        "{{base_url}}"
+                                    ],
+                                    "path": [
+                                        "api",
+                                        "v1",
+                                        "contents"
+                                    ],
+                                    "query": [
+                                        {
+                                            "key": "query",
+                                            "value": "",
+                                            "description": ""
+                                        },
+                                        {
+                                            "key": "type",
+                                            "value": "",
+                                            "description": ""
+                                        },
+                                        {
+                                            "key": "sort",
+                                            "value": "",
+                                            "description": ""
+                                        },
+                                        {
+                                            "key": "page",
+                                            "value": "0",
+                                            "description": ""
+                                        },
+                                        {
+                                            "key": "per_page",
+                                            "value": "0",
+                                            "description": ""
+                                        }
+                                    ]
+                                },
+                                "method": "GET",
+                                "body": {
+                                    "mode": ""
+                                }
+                            }
+                        },
+                        {
+                            "name": "contents",
+                            "item": [
+                                {
+                                    "name": ":id",
+                                    "request": {
+                                        "url": {
+                                            "raw": "{{base_url}}/api/v1/contents/:id",
+                                            "host": [
+                                                "{{base_url}}"
+                                            ],
+                                            "path": [
+                                                "api",
+                                                "v1",
+                                                "contents",
+                                                ":id"
+                                            ],
+                                            "query": [
+                                                {
+                                                    "key": "include_raw",
+                                                    "value": "false",
+                                                    "description": ""
+                                                }
+                                            ],
+                                            "variable": [
+                                                {
+                                                    "key": "id",
+                                                    "type": "string",
+                                                    "value": "0"
+                                                }
+                                            ]
+                                        },
+                                        "method": "GET",
+                                        "body": {
+                                            "mode": ""
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "variable": [
+        {
+            "key": "base_url",
+            "type": "string",
+            "value": "http://localhost:8080"
+        },
+        {
+            "key": "token",
+            "type": "string",
+            "value": "YOUR TOKEN HERE"
+        }
+    ]
+}

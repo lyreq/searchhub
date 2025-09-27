@@ -8,9 +8,6 @@ todo.md
 /uploads
 /assets
 
-www/openapi.json
-/lytemp-api.postman_collection.json
-
 # Ignore all local files
 .env
 .env.dev
